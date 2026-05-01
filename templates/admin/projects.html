@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<button class="hamburger" onclick="toggleSidebar()">☰</button>
+<div class="d-flex">
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <h4 class="text-white text-center mb-4">Admin Panel</h4>
+
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/projects">Projects</a>
+        <a href="/admin/members">Members</a>
+        <a href="/admin/tasks">Tasks</a>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+        <h2 class="page-title">Project Management</h2>
+
+        <!-- Add / Edit Project -->
+        <div class="admin-card">
+
+            <h5 class="section-title">
+                {{ 'Edit Project' if edit_project else 'Create New Project' }}
+            </h5>
+
+            <form method="POST">
+
+                <input type="hidden"
+                       name="edit_id"
+                       value="{{ edit_project.id if edit_project else '' }}">
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <input type="text"
+                               name="project_name"
+                               class="form-control"
+                               placeholder="Project Name"
+                               value="{{ edit_project.project_name if edit_project else '' }}"
+                               required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <input type="text"
+                               name="description"
+                               class="form-control"
+                               placeholder="Project Description"
+                               value="{{ edit_project.description if edit_project else '' }}"
+                               required>
+                    </div>
+
+                    <div class="col-md-2">
+                        <button type="submit"
+                                class="btn btn-primary w-100">
+                            {{ 'Update' if edit_project else 'Add' }}
+                        </button>
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        <!-- Project Table -->
+        <div class="admin-table">
+
+            <h5 class="section-title">All Projects</h5>
+
+            <table class="table table-bordered table-hover">
+
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Project Name</th>
+                        <th>Description</th>
+                        <th>Created Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for project in projects %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ project.project_name }}</td>
+                        <td>{{ project.description }}</td>
+                        <td>{{ project.created_at }}</td>
+
+                        <td>
+
+                            <a href="/admin/projects?edit={{ project.id }}"
+                               class="btn btn-warning btn-sm">
+                               Edit
+                            </a>
+
+                            <a href="/delete_project/{{ project.id }}"
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('Delete this project?')">
+                               Delete
+                            </a>
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    {% if projects|length == 0 %}
+                    <tr>
+                        <td colspan="5">No Projects Found</td>
+                    </tr>
+                    {% endif %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+<script>
+function toggleSidebar() {
+    document.getElementById("sidebar").classList.toggle("active");
+}
+</script>
+</body>
+</html>
